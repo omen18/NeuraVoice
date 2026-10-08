@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+python-multipart
+openai-whisper
+sentence-transformers
+spacy
+scikit-learn
+librosa
+soundfile
+numpy
+scipy
+torch
+transformers
+xgboost
