@@ -21,7 +21,7 @@ jobs:
 
       - name: Install frontend dependencies
         run: |
-          cd cognisafe-frontend
+          cd neuravoice-frontend
           npm install
 
       - name: Set up Python
@@ -31,5 +31,5 @@ jobs:
 
       - name: Install backend dependencies
         run: |
-          cd cognisafe-backend
+          cd neuravoice-backend
           pip install -r requirements.txt

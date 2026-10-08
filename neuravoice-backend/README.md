@@ -41,7 +41,7 @@ A **FastAPI REST API** — the connective layer between the React frontend and t
 ## 📁 Project Structure
 
 ```
-cognisafe-backend/
+neuravoice-backend/
 ├── main.py              # FastAPI entry point, CORS, startup hooks
 ├── database.py          # SQLAlchemy engine + session factory
 ├── auth.py              # Password hashing, JWT creation + decoding
@@ -280,7 +280,7 @@ def get_current_user(token = Depends(oauth2_scheme), db = Depends(get_db)) -> Us
 
 ```bash
 # 1. Install
-cd cognisafe-backend && pip install -r requirements.txt
+cd neuravoice-backend && pip install -r requirements.txt
 
 # 2. Environment
 cp .env.example .env   # edit with your values

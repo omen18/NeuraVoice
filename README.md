@@ -323,7 +323,7 @@ start_all.bat
 
 #### 1. AI/ML Pipeline Service
 ```bash
-cd cognisafe-deploy
+cd neuravoice-deploy
 python -m venv venv && source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
@@ -333,7 +333,7 @@ python api/main.py
 
 #### 2. Backend Gateway & Database
 ```bash
-cd cognisafe-backend
+cd neuravoice-backend
 python -m venv venv && source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env
@@ -344,7 +344,7 @@ uvicorn main:app --reload --port 8000
 
 #### 3. React Frontend Client
 ```bash
-cd cognisafe-frontend
+cd neuravoice-frontend
 npm install
 npm run dev
 # 🚀 Running on http://localhost:5173

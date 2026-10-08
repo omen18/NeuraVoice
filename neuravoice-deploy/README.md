@@ -67,7 +67,7 @@ The Neura Voice AI/ML pipeline is a **5-stage voice analysis engine** deployed a
 ## 📁 Project Structure
 
 ```
-cognisafe-deploy/
+neuravoice-deploy/
 │
 ├── Dockerfile                  # Python 3.11-slim + ffmpeg + pip dependencies
 ├── requirements.txt
@@ -563,7 +563,7 @@ winget install Gyan.FFmpeg       # or: choco install ffmpeg
 
 ```bash
 # 1. Clone & activate
-cd cognisafe-deploy
+cd neuravoice-deploy
 python -m venv venv
 source venv/bin/activate         # Windows: venv\Scripts\activate
 

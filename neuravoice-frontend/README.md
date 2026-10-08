@@ -42,7 +42,7 @@
 ## 📁 Project Structure
 
 ```
-cognisafe-frontend/
+neuravoice-frontend/
 ├── index.html                   # Vite entry point
 ├── vite.config.js               # Vite + React config
 ├── vercel.json                  # SPA rewrite rules
@@ -255,7 +255,7 @@ getTrajectory(token, months)      // → [ TrajectoryPoint ]
 ![AUTHENTICATION FLOW](../assets/frontend_1.png)
 ```bash
 # 1. Install
-cd cognisafe-frontend && npm install
+cd neuravoice-frontend && npm install
 
 # 2. Environment
 cp .env.example .env          # set VITE_API_URL
