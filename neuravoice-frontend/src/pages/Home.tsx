@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { LogoIcon } from "../components/common/Logo";
@@ -15,10 +15,12 @@ import {
   GitFork,
   ShieldCheck,
   Layers,
+  ArrowRight,
+  Sparkles,
 } from "lucide-react";
 import "../styles/home.css";
 
-const Home = () => {
+export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { isLoggedIn, user } = useAuth();
 
@@ -29,8 +31,6 @@ const Home = () => {
 
   // Scroll reveal
   useEffect(() => {
-
-    // Scroll reveal observer
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -45,9 +45,8 @@ const Home = () => {
 
     document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
-    // Nav shadow on scroll
     const handleScroll = () => {
-      const nav = document.querySelector(".home-nav");
+      const nav = document.querySelector(".home-nav") as HTMLElement | null;
       if (nav) {
         nav.style.boxShadow =
           window.scrollY > 48 ? "0 4px 28px var(--shadow)" : "none";
@@ -62,7 +61,7 @@ const Home = () => {
     };
   }, []);
 
-  const goToPage = (page) => {
+  const goToPage = (page: "session" | "auth" | "dashboard" | "home") => {
     if (page === "session") {
       if (isLoggedIn) {
         navigate("/session");
@@ -84,19 +83,65 @@ const Home = () => {
 
   return (
     <div className="home-root">
-
       {/* Navigation */}
       <nav className="home-nav" id="home-nav">
-        <div className="nav-logo" onClick={() => goToPage("home")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: "32px", height: "32px", borderRadius: "9px", background: "linear-gradient(135deg, #A88BFA, #7C3AED)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", boxShadow: "0 2px 8px rgba(124, 58, 237, 0.25)" }}>
-            <LogoIcon size={18} color="#ffffff" />
+        <div
+          className="nav-logo"
+          onClick={() => goToPage("home")}
+          style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
+        >
+          <div
+            style={{
+              width: "34px",
+              height: "34px",
+              borderRadius: "10px",
+              background: "linear-gradient(135deg, #A88BFA, #7C3AED)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#fff",
+              boxShadow: "0 2px 10px rgba(124, 58, 237, 0.28)",
+            }}
+          >
+            <LogoIcon size={19} color="#ffffff" />
           </div>
-          <span style={{ fontWeight: 600, letterSpacing: "-0.01em" }}>Neura Voice</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ fontWeight: 700, letterSpacing: "-0.01em", fontSize: "16px" }}>
+              Neura Voice
+            </span>
+            <span
+              style={{
+                fontSize: "10px",
+                fontWeight: "600",
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                padding: "2px 6px",
+                borderRadius: "6px",
+                background: "rgba(124, 58, 237, 0.12)",
+                color: "#7C3AED",
+                border: "1px solid rgba(124, 58, 237, 0.2)",
+              }}
+            >
+              AI
+            </span>
+          </div>
         </div>
-        <div className="nav-right">
-          <div className="nav-cta" onClick={() => goToPage("auth")}>
-            {isLoggedIn ? "Sign In" : "Sign In"}
-          </div>
+
+        <div className="nav-right" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          {isLoggedIn ? (
+            <div
+              className="nav-cta"
+              onClick={() => goToPage("dashboard")}
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
+            >
+              <span>Dashboard ({user?.name ? user.name.split(" ")[0] : "Account"})</span>
+              <ArrowRight size={14} />
+            </div>
+          ) : (
+            <div className="nav-cta" onClick={() => goToPage("auth")} style={{ cursor: "pointer" }}>
+              Sign In
+            </div>
+          )}
         </div>
       </nav>
 
@@ -105,7 +150,9 @@ const Home = () => {
         <div className="hero-left">
           <div className="eyebrow">
             <div className="eyebrow-dash"></div>
-            <div className="eyebrow-txt">Voice Biomarker Intelligence · Yash Raj Sharan</div>
+            <div className="eyebrow-txt" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <Sparkles size={12} color="#7C3AED" /> Voice Biomarker Intelligence · Yash Raj Sharan
+            </div>
           </div>
           <h1 className="hero-title">
             <span className="w-reg">Your voice</span>
@@ -114,15 +161,17 @@ const Home = () => {
             <span className="w-bold">you do.</span>
           </h1>
           <p className="hero-sub">
-            Neura Voice extracts <strong>14 clinical biomarkers</strong> from 3 minutes of daily speech — detecting early
-            cognitive decline <strong>18 months before symptoms appear.</strong>
+            Neura Voice extracts <strong>14 clinical biomarkers</strong> from 3 minutes of daily speech — detecting
+            early cognitive decline <strong>18 months before symptoms appear.</strong>
           </p>
           <div className="hero-ctas">
-            <div className="btn-p" onClick={() => goToPage("auth")}>
-              Start Free Session
-              <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                <path d="M2 7.5h11M9 3.5l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+            <div
+              className="btn-p"
+              onClick={() => goToPage("session")}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
+            >
+              <span>Start Free Session</span>
+              <ArrowRight size={15} />
             </div>
           </div>
           <div className="hero-stats">
@@ -140,6 +189,7 @@ const Home = () => {
             </div>
           </div>
         </div>
+
         <div className="hero-right">
           <div className="hero-card">
             <div className="fc fc1">
@@ -429,8 +479,8 @@ const Home = () => {
           <div className="stack-item">
             <span className="s-ico"><Code2 size={18} color="#9B4F7A" /></span>
             <div>
-              <div className="s-name">React 18 + Vite</div>
-              <div className="s-layer">Frontend</div>
+              <div className="s-name">TypeScript + React 18</div>
+              <div className="s-layer">Frontend Core</div>
             </div>
           </div>
           <div className="stack-item">
@@ -479,14 +529,14 @@ const Home = () => {
             <span className="s-ico"><ShieldCheck size={18} color="#9B4F7A" /></span>
             <div>
               <div className="s-name">JWT + bcrypt</div>
-              <div className="s-layer">Auth</div>
+              <div className="s-layer">Auth & Encryption</div>
             </div>
           </div>
           <div className="stack-item">
             <span className="s-ico"><Layers size={18} color="#9B4F7A" /></span>
             <div>
               <div className="s-name">Vercel + Render</div>
-              <div className="s-layer">Deployment</div>
+              <div className="s-layer">Cloud Infrastructure</div>
             </div>
           </div>
         </div>
@@ -526,21 +576,14 @@ const Home = () => {
             "It only requires <span>listening.</span>"
           </div>
           <div className="cta-btns">
-            <div className="btn-p-inv" onClick={() => goToPage("auth")}>
-              Begin Your First Session{" "}
-              <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                <path
-                  d="M2 7.5h11M9 3.5l4 4-4 4"
-                  stroke="currentColor"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+            <div
+              className="btn-p-inv"
+              onClick={() => goToPage("auth")}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
+            >
+              <span>Begin Your First Session</span>
+              <ArrowRight size={15} />
             </div>
-            {/* <div className="btn-g-inv" onClick={() => goToPage("auth")}>
-              Sign In
-            </div> */}
           </div>
         </div>
       </div>

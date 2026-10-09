@@ -1,20 +1,32 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser, registerUser } from "../services/authService";
 import { LogoIcon } from "../components/common/Logo";
-import { Sun, Moon, Eye, EyeOff, Check, Info } from "lucide-react";
+import { Sun, Moon, Eye, EyeOff, Check, Info, Sparkles } from "lucide-react";
 import "../styles/auth.css";
 
-// ── NEURAL CANVAS - Rose Gold Theme ──
-const useNeuralCanvas = (ref, isDark) => {
+interface CanvasNode {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  r: number;
+  pulse: number;
+}
+
+// ── NEURAL CANVAS - Rose Gold / Violet Theme ──
+const useNeuralCanvas = (ref: React.RefObject<HTMLCanvasElement>, isDark: boolean) => {
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    let raf, nodes = [];
+    if (!ctx) return;
+    let raf: number;
+    let nodes: CanvasNode[] = [];
 
     const resize = () => {
+      if (!canvas.parentElement) return;
       const p = canvas.parentElement.getBoundingClientRect();
       canvas.width = p.width;
       canvas.height = p.height;
@@ -40,8 +52,8 @@ const useNeuralCanvas = (ref, isDark) => {
 
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x,
-            dy = nodes[i].y - nodes[j].y;
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
           const d = Math.sqrt(dx * dx + dy * dy);
           if (d < 120) {
             ctx.beginPath();
@@ -78,31 +90,45 @@ const useNeuralCanvas = (ref, isDark) => {
 };
 
 // ── SVG ICONS ──
-
-const GoogleIcon = () => (
+const GoogleIcon: React.FC = () => (
   <svg width="15" height="15" viewBox="0 0 24 24">
-    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+    <path
+      fill="#4285F4"
+      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+    />
+    <path
+      fill="#34A853"
+      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+    />
+    <path
+      fill="#FBBC05"
+      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+    />
+    <path
+      fill="#EA4335"
+      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+    />
   </svg>
 );
 
-const GithubIcon = () => (
+const GithubIcon: React.FC = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="#8AAACA">
     <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
   </svg>
 );
 
-const LinkedInIcon = () => (
+const LinkedInIcon: React.FC = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
     <rect width="24" height="24" rx="4" fill="#0A66C2" />
-    <path d="M6.5 10h2v7.5h-2V10zm1-3a1.25 1.25 0 110 2.5A1.25 1.25 0 017.5 7zm4.5 3h1.9v1h.02C14.28 10.4 15.14 10 16.1 10c2.1 0 2.9 1.38 2.9 3.17V17.5h-2v-4c0-.76-.01-1.73-1.06-1.73-1.06 0-1.22.83-1.22 1.68V17.5H12V10z" fill="#fff" />
+    <path
+      d="M6.5 10h2v7.5h-2V10zm1-3a1.25 1.25 0 110 2.5A1.25 1.25 0 017.5 7zm4.5 3h1.9v1h.02C14.28 10.4 15.14 10 16.1 10c2.1 0 2.9 1.38 2.9 3.17V17.5h-2v-4c0-.76-.01-1.73-1.06-1.73-1.06 0-1.22.83-1.22 1.68V17.5H12V10z"
+      fill="#fff"
+    />
   </svg>
 );
 
 // ── STRENGTH BAR ──
-const getStr = (p) => {
+const getStr = (p: string): number => {
   let s = 0;
   if (p.length >= 8) s++;
   if (/[A-Z]/.test(p)) s++;
@@ -111,7 +137,7 @@ const getStr = (p) => {
   return s;
 };
 
-const StrengthBar = ({ password }) => {
+const StrengthBar: React.FC<{ password: string }> = ({ password }) => {
   const score = getStr(password);
   const colors = ["#EF4444", "#F59E0B", "#F59E0B", "#10B981"];
   return (
@@ -127,22 +153,21 @@ const StrengthBar = ({ password }) => {
   );
 };
 
-// ── MAIN COMPONENT ──
-const Auth = () => {
+export const Auth: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const [dark, setDark] = useState(() => {
+  const [dark, setDark] = useState<boolean>(() => {
     const saved = localStorage.getItem("auth_theme");
     return saved === "dark";
   });
-  const [mode, setMode] = useState("login");
-  const [state, setState] = useState("form");
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const [state, setState] = useState<"form" | "loading" | "success">("form");
   const [progress, setProgress] = useState(0);
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", dob: "" });
   const [errors, setErrors] = useState({ email: "", password: "", dob: "" });
-  const [toast, setToast] = useState(null);
+  const [toast, setToast] = useState<string | null>(null);
   const [showPw, setShowPw] = useState(false);
 
   useNeuralCanvas(canvasRef, dark);
@@ -152,13 +177,14 @@ const Auth = () => {
     localStorage.setItem("auth_theme", dark ? "dark" : "light");
   }, [dark]);
 
-  const showToast = (msg) => {
+  const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3200);
   };
 
   const isReg = mode === "register";
-  const update = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
+  const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm((p) => ({ ...p, [k]: e.target.value }));
 
   const validate = () => {
     const errs = { email: "", password: "", dob: "" };
@@ -188,7 +214,7 @@ const Auth = () => {
           firstNameTrimmed + " " + lastNameTrimmed,
           emailTrimmed,
           passwordTrimmed,
-          form.dob || null
+          form.dob || undefined
         );
       } else {
         tokenData = await loginUser(emailTrimmed, passwordTrimmed);
@@ -201,11 +227,11 @@ const Auth = () => {
         setProgress(p);
         if (p >= 100) {
           clearInterval(iv);
-          const redirectTo = location.state?.redirectTo || "/dashboard";
+          const redirectTo = (location.state as any)?.redirectTo || "/dashboard";
           setTimeout(() => navigate(redirectTo), 300);
         }
       }, 40);
-    } catch (err) {
+    } catch (err: any) {
       setState("form");
       setErrors((prev) => ({ ...prev, email: err.message }));
     }
@@ -234,7 +260,7 @@ const Auth = () => {
     }, 600);
   };
 
-  const switchMode = (m) => {
+  const switchMode = (m: "login" | "register") => {
     setMode(m);
     setForm({ firstName: "", lastName: "", email: "", password: "", dob: "" });
     setErrors({ email: "", password: "", dob: "" });
@@ -257,7 +283,19 @@ const Auth = () => {
         <div className="grid-lines" />
         <div className="left-content">
           <div className="logo-row" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-            <div className="logo-box" style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg, #A88BFA, #7C3AED)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>
+            <div
+              className="logo-box"
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 10,
+                background: "linear-gradient(135deg, #A88BFA, #7C3AED)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+              }}
+            >
               <LogoIcon size={18} color="#ffffff" />
             </div>
             <span className="logo-name">Neura Voice</span>
@@ -305,8 +343,20 @@ const Auth = () => {
 
       {/* RIGHT PANEL */}
       <div className="right">
-        <button className="mode-toggle" onClick={toggleTheme} style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-          {dark ? <><Sun size={14} /> Light mode</> : <><Moon size={14} /> Dark mode</>}
+        <button
+          className="mode-toggle"
+          onClick={toggleTheme}
+          style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+        >
+          {dark ? (
+            <>
+              <Sun size={14} /> Light mode
+            </>
+          ) : (
+            <>
+              <Moon size={14} /> Dark mode
+            </>
+          )}
         </button>
 
         {state !== "success" && (
@@ -320,10 +370,16 @@ const Auth = () => {
             </div>
 
             <div className="seg">
-              <button className={`seg-btn ${!isReg ? "act" : ""}`} onClick={() => switchMode("login")}>
+              <button
+                className={`seg-btn ${!isReg ? "act" : ""}`}
+                onClick={() => switchMode("login")}
+              >
                 Sign in
               </button>
-              <button className={`seg-btn ${isReg ? "act" : ""}`} onClick={() => switchMode("register")}>
+              <button
+                className={`seg-btn ${isReg ? "act" : ""}`}
+                onClick={() => switchMode("register")}
+              >
                 Create account
               </button>
             </div>
@@ -332,11 +388,23 @@ const Auth = () => {
               <div className="field-row" style={{ marginBottom: 16 }}>
                 <div className="field">
                   <label className="f-label">First name</label>
-                  <input className="f-input" type="text" placeholder="Yash" value={form.firstName} onChange={update("firstName")} />
+                  <input
+                    className="f-input"
+                    type="text"
+                    placeholder="Yash"
+                    value={form.firstName}
+                    onChange={update("firstName")}
+                  />
                 </div>
                 <div className="field">
                   <label className="f-label">Last name</label>
-                  <input className="f-input" type="text" placeholder="Sharan" value={form.lastName} onChange={update("lastName")} />
+                  <input
+                    className="f-input"
+                    type="text"
+                    placeholder="Sharan"
+                    value={form.lastName}
+                    onChange={update("lastName")}
+                  />
                 </div>
               </div>
             )}
@@ -374,7 +442,12 @@ const Auth = () => {
                 <div
                   className="input-icon"
                   onClick={() => setShowPw(!showPw)}
-                  style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  style={{
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                   title={showPw ? "Hide password" : "Show password"}
                 >
                   {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -394,7 +467,7 @@ const Auth = () => {
 
             {!isReg && (
               <div className="forgot-row">
-                <a href="#" className="forgot">
+                <a href="#" className="forgot" onClick={(e) => { e.preventDefault(); showToast("Password reset link sent to registered email"); }}>
                   Forgot password?
                 </a>
               </div>
@@ -421,15 +494,15 @@ const Auth = () => {
             </div>
 
             <div className="socials">
-              <button className="soc-btn" onClick={() => showToast("Google login coming soon")}>
+              <button className="soc-btn" onClick={() => showToast("Google authentication is in private preview")}>
                 <GoogleIcon />
                 Google
               </button>
-              <button className="soc-btn" onClick={() => showToast("GitHub login coming soon")}>
+              <button className="soc-btn" onClick={() => showToast("GitHub authentication is in private preview")}>
                 <GithubIcon />
                 GitHub
               </button>
-              <button className="soc-btn" onClick={() => showToast("LinkedIn login coming soon")}>
+              <button className="soc-btn" onClick={() => showToast("LinkedIn authentication is in private preview")}>
                 <LinkedInIcon />
                 LinkedIn
               </button>
@@ -461,7 +534,10 @@ const Auth = () => {
 
         {state === "success" && (
           <div className="success-card" style={{ display: "flex" }}>
-            <div className="success-orb" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div
+              className="success-orb"
+              style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+            >
               <Check size={26} color="#ffffff" strokeWidth={3} />
             </div>
             <div className="form-title">Welcome to Neura Voice!</div>

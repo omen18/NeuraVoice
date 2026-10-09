@@ -1,9 +1,15 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { SessionRecord, Biomarkers } from "../../types";
 
-const BACKEND = "https://cognisafe-backend-yh4x.onrender.com";
+const BACKEND = import.meta.env.VITE_API_URL || "https://cognisafe-backend-yh4x.onrender.com";
 
-const fetchLatestSession = async (token) => {
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+const fetchLatestSession = async (token: string): Promise<SessionRecord | null> => {
   try {
     const res = await fetch(`${BACKEND}/api/sessions/latest`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -15,7 +21,7 @@ const fetchLatestSession = async (token) => {
   }
 };
 
-const buildSystemPrompt = (user, session) => {
+const buildSystemPrompt = (user: any, session: SessionRecord | null) => {
   let prompt = `You are Neura Voice's friendly AI health assistant. Neura Voice is a voice biomarker platform that detects early cognitive health changes by analysing 14 biomarkers from daily 3-minute voice recordings.
 
 You help users understand:
@@ -30,7 +36,7 @@ Always be warm, reassuring, and clear. Never diagnose. Always recommend consulti
 User's name: ${user?.name || "there"}`;
 
   if (session) {
-    const bm = session.biomarkers || session;
+    const bm: Biomarkers = session.biomarkers || (session as any);
     prompt += `
 
 Their most recent session results:
@@ -54,7 +60,16 @@ When the user asks about their results, refer to these specific values.`;
 };
 
 const BrainIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M9.5 2a2.5 2.5 0 0 1 5 0v.5" />
     <path d="M9 2.5C6.5 3 4.5 5.5 4.5 8.5c0 1.5.5 2.8 1.3 3.8" />
     <path d="M15 2.5c2.5.5 4.5 3 4.5 6 0 1.5-.5 2.8-1.3 3.8" />
@@ -65,26 +80,37 @@ const BrainIcon = () => (
 
 const CloseIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
 
 const SendIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="22" y1="2" x2="11" y2="13" />
+    <polygon points="22 2 15 22 11 13 2 9 22 2" />
   </svg>
 );
 
-const ChatBot = () => {
+export const ChatBot: React.FC = () => {
   const { user, token, isLoggedIn } = useAuth();
-  const [open, setOpen]               = useState(false);
-  const [messages, setMessages]       = useState([]);
-  const [input, setInput]             = useState("");
-  const [loading, setLoading]         = useState(false);
-  const [sessionData, setSessionData] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sessionData, setSessionData] = useState<SessionRecord | null>(null);
   const [sessionLoaded, setSessionLoaded] = useState(false);
-  const messagesEndRef = useRef(null);
-  const inputRef       = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     if (isLoggedIn && token && !sessionLoaded) {
@@ -104,18 +130,18 @@ const ChatBot = () => {
       setMessages([{ role: "assistant", content: greeting }]);
     }
     if (open) setTimeout(() => inputRef.current?.focus(), 100);
-  }, [open]);
+  }, [open, user?.name, sessionData, messages.length]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendMessage = async (overrideInput) => {
+  const sendMessage = async (overrideInput?: string) => {
     const text = (overrideInput ?? input).trim();
     if (!text || loading) return;
 
     setInput("");
-    const newMessages = [...messages, { role: "user", content: text }];
+    const newMessages: ChatMessage[] = [...messages, { role: "user", content: text }];
     setMessages(newMessages);
     setLoading(true);
 
@@ -139,14 +165,17 @@ const ChatBot = () => {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Sorry, I'm having trouble connecting right now. Please try again in a moment." },
+        {
+          role: "assistant",
+          content: "Sorry, I'm having trouble connecting right now. Please try again in a moment.",
+        },
       ]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleKey = (e) => {
+  const handleKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -161,22 +190,23 @@ const ChatBot = () => {
         .cog-chat-bubble {
           position: fixed; bottom: 28px; right: 28px; z-index: 9999;
           width: 52px; height: 52px; border-radius: 50%;
-          background: linear-gradient(135deg, #C4B0F8, #9B4F7A);
+          background: linear-gradient(135deg, #A88BFA, #7C3AED);
           border: none; cursor: pointer;
           display: flex; align-items: center; justify-content: center; color: #fff;
-          box-shadow: 0 4px 20px rgba(155,79,122,0.45);
+          box-shadow: 0 4px 20px rgba(124, 58, 237, 0.45);
           transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .cog-chat-bubble:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(155,79,122,0.55); }
-        .cog-chat-bubble.open { background: linear-gradient(135deg, #9B4F7A, #7B3560); }
+        .cog-chat-bubble:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(124, 58, 237, 0.55); }
+        .cog-chat-bubble.open { background: linear-gradient(135deg, #7C3AED, #6D28D9); }
         .cog-chat-popup {
           position: fixed; bottom: 92px; right: 28px; z-index: 9998;
           width: 360px; height: 500px;
-          background: var(--bg-raised, #fff);
+          background: var(--bg-raised, #ffffff);
           border-radius: 20px;
-          border: 1px solid var(--rose-border, rgba(155,79,122,0.18));
-          box-shadow: 0 16px 60px rgba(46,21,37,0.18);
+          border: 1px solid var(--border, rgba(124, 58, 237, 0.18));
+          box-shadow: 0 16px 60px rgba(24, 10, 40, 0.2);
           display: flex; flex-direction: column; overflow: hidden;
+          backdrop-filter: blur(12px);
           animation: chatPopIn 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
         }
         @keyframes chatPopIn {
@@ -185,7 +215,7 @@ const ChatBot = () => {
         }
         .cog-chat-header {
           padding: 16px 18px;
-          background: linear-gradient(135deg, #C4B0F8 0%, #9B4F7A 100%);
+          background: linear-gradient(135deg, #A88BFA 0%, #7C3AED 100%);
           display: flex; align-items: center; gap: 10px; flex-shrink: 0;
         }
         .cog-chat-header-icon {
@@ -195,10 +225,10 @@ const ChatBot = () => {
         }
         .cog-chat-header-text { flex: 1; }
         .cog-chat-header-title {
-          font-family: 'Playfair Display', serif; font-size: 15px;
-          font-weight: 600; color: #fff; line-height: 1.2;
+          font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px;
+          font-weight: 700; color: #fff; line-height: 1.2;
         }
-        .cog-chat-header-sub { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 1px; }
+        .cog-chat-header-sub { font-size: 11px; color: rgba(255,255,255,0.85); margin-top: 1px; }
         .cog-chat-close {
           background: rgba(255,255,255,0.18); border: none; border-radius: 8px;
           width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
@@ -209,35 +239,34 @@ const ChatBot = () => {
           flex: 1; overflow-y: auto; padding: 14px 14px 8px;
           display: flex; flex-direction: column; gap: 10px;
           scrollbar-width: thin;
-          scrollbar-color: var(--rose-border, rgba(155,79,122,0.2)) transparent;
         }
         .cog-chat-messages::-webkit-scrollbar { width: 4px; }
-        .cog-chat-messages::-webkit-scrollbar-thumb { background: var(--rose-border, rgba(155,79,122,0.2)); border-radius: 4px; }
+        .cog-chat-messages::-webkit-scrollbar-thumb { background: rgba(124, 58, 237, 0.2); border-radius: 4px; }
         .cog-msg {
           max-width: 85%; padding: 9px 13px; border-radius: 14px;
           font-size: 13.5px; line-height: 1.5; word-break: break-word;
         }
         .cog-msg.user {
           align-self: flex-end;
-          background: linear-gradient(135deg, #C4B0F8, #9B4F7A);
+          background: linear-gradient(135deg, #A88BFA, #7C3AED);
           color: #fff; border-bottom-right-radius: 4px;
         }
         .cog-msg.assistant {
           align-self: flex-start;
-          background: var(--bg-surface, #F3EDF3);
-          color: var(--text, #140A10);
+          background: rgba(124, 58, 237, 0.06);
+          color: inherit;
           border-bottom-left-radius: 4px;
-          border: 1px solid var(--rose-border, rgba(155,79,122,0.12));
+          border: 1px solid rgba(124, 58, 237, 0.12);
         }
         .cog-chat-typing {
           align-self: flex-start;
-          background: var(--bg-surface, #F3EDF3);
-          border: 1px solid var(--rose-border, rgba(155,79,122,0.12));
+          background: rgba(124, 58, 237, 0.06);
+          border: 1px solid rgba(124, 58, 237, 0.12);
           padding: 10px 14px; border-radius: 14px; border-bottom-left-radius: 4px;
           display: flex; gap: 4px; align-items: center;
         }
         .cog-dot {
-          width: 6px; height: 6px; background: var(--rose, #9B4F7A);
+          width: 6px; height: 6px; background: #7C3AED;
           border-radius: 50%; animation: cogDot 1.2s infinite ease-in-out; opacity: 0.5;
         }
         .cog-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -251,36 +280,36 @@ const ChatBot = () => {
         }
         .cog-suggestion {
           font-size: 11.5px; padding: 5px 10px; border-radius: 20px;
-          border: 1px solid var(--rose-border, rgba(155,79,122,0.2));
-          background: var(--rose-pale, rgba(155,79,122,0.05));
-          color: var(--rose, #9B4F7A); cursor: pointer;
-          font-family: 'Inter', sans-serif; transition: background 0.15s; white-space: nowrap;
+          border: 1px solid rgba(124, 58, 237, 0.2);
+          background: rgba(124, 58, 237, 0.05);
+          color: #7C3AED; cursor: pointer;
+          transition: background 0.15s, border-color 0.15s; white-space: nowrap;
         }
-        .cog-suggestion:hover { background: rgba(155,79,122,0.12); }
+        .cog-suggestion:hover { background: rgba(124, 58, 237, 0.12); border-color: rgba(124, 58, 237, 0.4); }
         .cog-chat-input-row {
           padding: 10px 12px;
-          border-top: 1px solid var(--rose-border, rgba(155,79,122,0.12));
+          border-top: 1px solid rgba(124, 58, 237, 0.12);
           display: flex; gap: 8px; align-items: flex-end;
-          flex-shrink: 0; background: var(--bg-raised, #fff);
+          flex-shrink: 0; background: var(--bg-raised, #ffffff);
         }
         .cog-chat-input {
-          flex: 1; border: 1px solid var(--rose-border, rgba(155,79,122,0.2));
+          flex: 1; border: 1px solid rgba(124, 58, 237, 0.2);
           border-radius: 12px; padding: 9px 13px; font-size: 13.5px;
-          font-family: 'Inter', sans-serif;
-          background: var(--bg-surface, #F3EDF3); color: var(--text, #140A10);
+          font-family: inherit;
+          background: rgba(124, 58, 237, 0.03); color: inherit;
           resize: none; outline: none; max-height: 90px; line-height: 1.4;
           transition: border-color 0.15s;
         }
-        .cog-chat-input:focus { border-color: var(--rose, #9B4F7A); }
-        .cog-chat-input::placeholder { color: var(--text-muted, #A08898); }
+        .cog-chat-input:focus { border-color: #7C3AED; }
+        .cog-chat-input::placeholder { opacity: 0.6; }
         .cog-chat-send {
           width: 36px; height: 36px;
-          background: linear-gradient(135deg, #C4B0F8, #9B4F7A);
+          background: linear-gradient(135deg, #A88BFA, #7C3AED);
           border: none; border-radius: 10px; cursor: pointer;
           display: flex; align-items: center; justify-content: center; color: #fff;
           flex-shrink: 0; transition: opacity 0.15s, transform 0.15s;
         }
-        .cog-chat-send:hover:not(:disabled) { opacity: 0.88; transform: scale(1.05); }
+        .cog-chat-send:hover:not(:disabled) { opacity: 0.9; transform: scale(1.05); }
         .cog-chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
         @media (max-width: 480px) {
           .cog-chat-popup { width: calc(100vw - 24px); right: 12px; bottom: 80px; height: 460px; }
@@ -299,23 +328,31 @@ const ChatBot = () => {
       {open && (
         <div className="cog-chat-popup">
           <div className="cog-chat-header">
-            <div className="cog-chat-header-icon"><BrainIcon /></div>
+            <div className="cog-chat-header-icon">
+              <BrainIcon />
+            </div>
             <div className="cog-chat-header-text">
               <div className="cog-chat-header-title">Neura Voice Assistant</div>
               <div className="cog-chat-header-sub">
                 {sessionData ? `Last session: ${sessionData.risk_tier || "Green"}` : "Ask me anything"}
               </div>
             </div>
-            <button className="cog-chat-close" onClick={() => setOpen(false)}><CloseIcon /></button>
+            <button className="cog-chat-close" onClick={() => setOpen(false)}>
+              <CloseIcon />
+            </button>
           </div>
 
           <div className="cog-chat-messages">
             {messages.map((msg, i) => (
-              <div key={i} className={`cog-msg ${msg.role}`}>{msg.content}</div>
+              <div key={i} className={`cog-msg ${msg.role}`}>
+                {msg.content}
+              </div>
             ))}
             {loading && (
               <div className="cog-chat-typing">
-                <div className="cog-dot" /><div className="cog-dot" /><div className="cog-dot" />
+                <div className="cog-dot" />
+                <div className="cog-dot" />
+                <div className="cog-dot" />
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -323,8 +360,15 @@ const ChatBot = () => {
 
           {messages.length <= 1 && !loading && (
             <div className="cog-chat-suggestions">
-              {["What does my risk tier mean?", "Explain semantic coherence", "Is my speech rate normal?", "What is jitter?"].map((s) => (
-                <button key={s} className="cog-suggestion" onClick={() => sendMessage(s)}>{s}</button>
+              {[
+                "What does my risk tier mean?",
+                "Explain semantic coherence",
+                "Is my speech rate normal?",
+                "What is jitter?",
+              ].map((s) => (
+                <button key={s} className="cog-suggestion" onClick={() => sendMessage(s)}>
+                  {s}
+                </button>
               ))}
             </div>
           )}

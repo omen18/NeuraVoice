@@ -1,11 +1,26 @@
+import { User, SessionRecord, WeeklyReportData } from "../types";
+
 const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-const authHeaders = (token) => ({
+const authHeaders = (token: string) => ({
   "Content-Type": "application/json",
-  "Authorization": `Bearer ${token}`,
+  Authorization: `Bearer ${token}`,
 });
 
-export const getProfile = async (token) => {
+export interface SessionHistoryItem {
+  date: string;
+  status: string;
+  risk_tier: string;
+  session_id: string | number;
+}
+
+export interface TrajectoryItem {
+  month: string;
+  score: number;
+  session_count: number;
+}
+
+export const getProfile = async (token: string): Promise<User> => {
   const res = await fetch(`${API}/api/users/me`, {
     headers: authHeaders(token),
   });
@@ -14,16 +29,16 @@ export const getProfile = async (token) => {
   return data;
 };
 
-export const getSessionHistory = async (token, months = 1) => {
+export const getSessionHistory = async (token: string, months = 1): Promise<SessionHistoryItem[]> => {
   const res = await fetch(`${API}/api/sessions/history?months=${months}`, {
     headers: authHeaders(token),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.detail || "Failed to fetch history");
-  return data; // [{ date, status, risk_tier, session_id }]
+  return data;
 };
 
-export const getLatestSession = async (token) => {
+export const getLatestSession = async (token: string): Promise<SessionRecord | null> => {
   const res = await fetch(`${API}/api/sessions/latest`, {
     headers: authHeaders(token),
   });
@@ -33,7 +48,7 @@ export const getLatestSession = async (token) => {
   return data;
 };
 
-export const getWeeklyReport = async (token) => {
+export const getWeeklyReport = async (token: string): Promise<WeeklyReportData> => {
   const res = await fetch(`${API}/api/reports/weekly`, {
     headers: authHeaders(token),
   });
@@ -42,11 +57,11 @@ export const getWeeklyReport = async (token) => {
   return data;
 };
 
-export const getTrajectory = async (token, months = 6) => {
+export const getTrajectory = async (token: string, months = 6): Promise<TrajectoryItem[]> => {
   const res = await fetch(`${API}/api/reports/trajectory?months=${months}`, {
     headers: authHeaders(token),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.detail || "Failed to fetch trajectory");
-  return data; // [{ month, score, session_count }]
+  return data;
 };
