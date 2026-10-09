@@ -1,15 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
-
-const LogoIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
-    <circle cx="9" cy="9" r="5" stroke="#fff" strokeWidth="1.6"/>
-    <circle cx="9" cy="9" r="1.8" fill="#fff"/>
-    <line x1="9" y1="2"  x2="9"  y2="4"  stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/>
-    <line x1="9" y1="14" x2="9"  y2="16" stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/>
-    <line x1="2" y1="9"  x2="4"  y2="9"  stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/>
-    <line x1="14" y1="9" x2="16" y2="9"  stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/>
-  </svg>
-);
+import { LogoIcon } from "./Logo";
+import { Plus } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -19,11 +10,13 @@ const Navbar = () => {
   return (
     <nav className="shared-nav">
       <a href="/dashboard" className="nav-logo">
-        <div className="nav-logo-box"><LogoIcon /></div>
+        <div className="nav-logo-box">
+          <LogoIcon size={18} color="#ffffff" />
+        </div>
         <span className="nav-logo-name">Neura Voice</span>
       </a>
       <div className="nav-links">
-        {["dashboard","session","brain","ar-report"].map(p => (
+        {["dashboard", "session", "brain", "ar-report"].map((p) => (
           <button
             key={p}
             className={`nav-link ${active === p ? "active" : ""}`}
@@ -34,7 +27,9 @@ const Navbar = () => {
         ))}
       </div>
       <div className="nav-right">
-        <button className="nav-session-btn" onClick={() => navigate("/session")}>+ Start session</button>
+        <button className="nav-session-btn" onClick={() => navigate("/session")} style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+          <Plus size={15} strokeWidth={2.5} /> Start session
+        </button>
         <div className="nav-avatar">YS</div>
       </div>
     </nav>

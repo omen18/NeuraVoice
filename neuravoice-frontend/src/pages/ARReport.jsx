@@ -2,20 +2,30 @@ import { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getWeeklyReport, getLatestSession, getProfile, getSessionHistory } from "../services/dashboardService";
+import { LogoIcon } from "../components/common/Logo";
+import {
+  Sun,
+  Moon,
+  Brain,
+  User,
+  Mic,
+  Timer,
+  FileText,
+  AudioWaveform,
+  Activity,
+  MessageSquare,
+  Waves,
+  Lightbulb,
+  BarChart3,
+  BarChart2,
+  Mail,
+  Link,
+  Printer,
+  Sparkles,
+  Flame,
+} from "lucide-react";
 import "../styles/arreport.css";
 import { jsPDF } from "jspdf";
-
-// ── LOGO ICON ──
-const LogoIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
-    <circle cx="9" cy="9" r="5" stroke="#fff" strokeWidth="1.6" />
-    <circle cx="9" cy="9" r="1.8" fill="#fff" />
-    <line x1="9" y1="2" x2="9" y2="4" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="9" y1="14" x2="9" y2="16" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="2" y1="9" x2="4" y2="9" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="14" y1="9" x2="16" y2="9" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-  </svg>
-);
 
 // ── REAL QR CODE GENERATOR ──
 const RealQRCode = ({ data, size = 140 }) => {
@@ -500,10 +510,10 @@ const ARReport = () => {
     setDownloading(true);
     try {
       await generateRealPDF(displayData);
-      showToast("✓ PDF downloaded successfully!");
+      showToast("PDF downloaded successfully!");
     } catch (err) {
       console.error("PDF error:", err);
-      showToast("⚠ PDF generation failed. Please try again.");
+      showToast("PDF generation failed. Please try again.");
     } finally {
       setDownloading(false);
     }
@@ -513,7 +523,7 @@ const ARReport = () => {
     if (method === "Copy Link") {
       const shareUrl = qrData || window.location.href;
       await navigator.clipboard.writeText(shareUrl);
-      showToast("✓ Report link copied to clipboard!");
+      showToast("Report link copied to clipboard!");
     } else if (method === "Email") {
       window.location.href = `mailto:?subject=Neura Voice Health Report&body=Check out my cognitive health report: ${window.location.href}`;
       showToast("Opening email...");
@@ -532,10 +542,10 @@ const ARReport = () => {
   };
 
   const shareOptions = [
-    { icon: "📧", label: "Email", sub: "Send to doctor", action: "Email", color: "#6366F1" },
-    { icon: "💬", label: "WhatsApp", sub: "Share instantly", action: "WhatsApp", color: "#25D366" },
-    { icon: "🔗", label: "Copy Link", sub: "Shareable URL", action: "Copy Link", color: "#D4A5B5" },
-    { icon: "🖨️", label: "Print", sub: "Physical copy", action: "Print", color: "#E58383" },
+    { icon: <Mail size={16} />, label: "Email", sub: "Send to doctor", action: "Email", color: "#6366F1" },
+    { icon: <MessageSquare size={16} />, label: "WhatsApp", sub: "Share instantly", action: "WhatsApp", color: "#25D366" },
+    { icon: <Link size={16} />, label: "Copy Link", sub: "Shareable URL", action: "Copy Link", color: "#D4A5B5" },
+    { icon: <Printer size={16} />, label: "Print", sub: "Physical copy", action: "Print", color: "#E58383" },
   ];
 
   const getRiskText = () => {
@@ -549,9 +559,9 @@ const ARReport = () => {
     <div className={`report-root ${dark ? "dark" : "light"}`}>
       {/* Navigation */}
       <nav className="report-nav">
-        <div className="nav-brand" onClick={() => navigate("/")}>
-          <div className="brand-ring">
-            <LogoIcon />
+        <div className="nav-brand" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+          <div className="brand-ring" style={{ width: "32px", height: "32px", borderRadius: "9px", background: "linear-gradient(135deg, #A88BFA, #7C3AED)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(124, 58, 237, 0.25)" }}>
+            <LogoIcon size={18} color="#ffffff" />
           </div>
           <span className="brand-name">Neura Voice</span>
         </div>
@@ -563,8 +573,8 @@ const ARReport = () => {
         </div>
 
         <div className="nav-actions">
-          <button className="theme-toggle" onClick={toggleDark}>
-            {dark ? "☀️" : "🌙"}
+          <button className="theme-toggle" onClick={toggleDark} title="Toggle theme">
+            {dark ? <Sun size={16} /> : <Moon size={16} />}
           </button>
           <button className="new-session" onClick={() => navigate("/session")}>
             <span>+</span> New Session
@@ -585,15 +595,15 @@ const ARReport = () => {
           <h1 className="report-title">
             Your Health <span className="highlight">Summary</span>
           </h1>
-          <p className="report-date">
-            {displayData.weekLabel} · Session streak: {displayData.streak} days 🔥
+          <p className="report-date" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+            {displayData.weekLabel} · Session streak: {displayData.streak} days <Flame size={14} color="#F59E0B" />
           </p>
           {isDemo && <div className="demo-badge-large">Demo Mode - Sample Data</div>}
         </div>
 
         {/* Risk Banner */}
         <div className={`risk-banner ${displayData.riskTier.toLowerCase()}`}>
-          <div className="risk-icon">🧠</div>
+          <div className="risk-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><Brain size={26} color="#7C3AED" /></div>
           <div className="risk-content">
             <div className="risk-label">Current Risk Tier</div>
             <div className="risk-value">Cognitive health: {displayData.riskHealth}</div>
@@ -622,7 +632,9 @@ const ARReport = () => {
             ) : (
               <div className="mini-stat-value">{report?.sessions_this_week || (isDemo ? "5" : "0")}/7</div>
             )}
-            <div className="mini-stat-sub">Streak: {displayData.streak} days 🔥</div>
+            <div className="mini-stat-sub" style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+              Streak: {displayData.streak} days <Flame size={13} color="#F59E0B" />
+            </div>
             <div className="mini-stat-trend positive">▲ On track — keep going!</div>
           </div>
         </div>
@@ -717,7 +729,9 @@ const ARReport = () => {
           <div className="card-accent"></div>
           <div className="insights-header">
             <h3 className="card-title">AI-Generated Weekly Insights</h3>
-            <span className="insights-badge">✨ AI Powered</span>
+            <span className="insights-badge" style={{ display: "inline-flex", alignItems: "center", gap: "5px" }}>
+              <Sparkles size={13} /> AI Powered
+            </span>
           </div>
           <p className="card-subtitle">Based on your {report?.sessions_this_week || (isDemo ? "5" : "0")} sessions this week</p>
           <div className="insights-list">
@@ -747,7 +761,9 @@ const ARReport = () => {
             <div className="recommendations-list">
               {displayData.recommendations.map((rec, idx) => (
                 <div key={idx} className="recommendation-item">
-                  <span className="rec-icon">💡</span>
+                  <span className="rec-icon" style={{ display: "inline-flex", alignItems: "center" }}>
+                    <Lightbulb size={16} color="#F59E0B" />
+                  </span>
                   <span className="rec-text">{rec}</span>
                 </div>
               ))}
@@ -757,11 +773,11 @@ const ARReport = () => {
 
         {/* Quick Actions */}
         <div className="report-actions">
-          <button className="action-btn primary" onClick={() => navigate("/session")}>
-            <span>🎙️</span> Start New Session
+          <button className="action-btn primary" onClick={() => navigate("/session")} style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+            <Mic size={16} /> Start New Session
           </button>
-          <button className="action-btn" onClick={() => navigate("/dashboard")}>
-            <span>📊</span> View Dashboard
+          <button className="action-btn" onClick={() => navigate("/dashboard")} style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+            <BarChart2 size={16} /> View Dashboard
           </button>
         </div>
       </main>
@@ -779,18 +795,18 @@ const ARReport = () => {
 // Helper function for metric icons
 const getMetricIcon = (name) => {
   const icons = {
-    "Semantic Coherence": "🧠",
-    "Cognitive Age": "👤",
-    "Speech Rate": "🎙️",
-    "Pause Frequency": "⏸️",
-    "Lexical Diversity": "📊",
-    "HNR": "🎵",
-    "Jitter": "📈",
-    "Articulation Rate": "🗣️",
-    "Pitch Mean": "🎼",
-    "Idea Density": "💡"
+    "Semantic Coherence": <Brain size={16} />,
+    "Cognitive Age": <User size={16} />,
+    "Speech Rate": <Mic size={16} />,
+    "Pause Frequency": <Timer size={16} />,
+    "Lexical Diversity": <FileText size={16} />,
+    "HNR": <AudioWaveform size={16} />,
+    "Jitter": <Activity size={16} />,
+    "Articulation Rate": <MessageSquare size={16} />,
+    "Pitch Mean": <Waves size={16} />,
+    "Idea Density": <Lightbulb size={16} />,
   };
-  return icons[name] || "📊";
+  return icons[name] || <BarChart3 size={16} />;
 };
 
 export default ARReport;

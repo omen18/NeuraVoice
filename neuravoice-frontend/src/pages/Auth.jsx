@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser, registerUser } from "../services/authService";
+import { LogoIcon } from "../components/common/Logo";
+import { Sun, Moon, Eye, EyeOff, Check, Info } from "lucide-react";
 import "../styles/auth.css";
 
 // ── NEURAL CANVAS - Rose Gold Theme ──
@@ -76,16 +78,6 @@ const useNeuralCanvas = (ref, isDark) => {
 };
 
 // ── SVG ICONS ──
-const LogoIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-    <circle cx="9" cy="9" r="5" stroke="#fff" strokeWidth="1.6" />
-    <circle cx="9" cy="9" r="1.8" fill="#fff" />
-    <line x1="9" y1="2" x2="9" y2="4" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="9" y1="14" x2="9" y2="16" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="2" y1="9" x2="4" y2="9" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="14" y1="9" x2="16" y2="9" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-  </svg>
-);
 
 const GoogleIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24">
@@ -151,6 +143,7 @@ const Auth = () => {
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", dob: "" });
   const [errors, setErrors] = useState({ email: "", password: "", dob: "" });
   const [toast, setToast] = useState(null);
+  const [showPw, setShowPw] = useState(false);
 
   useNeuralCanvas(canvasRef, dark);
 
@@ -264,8 +257,8 @@ const Auth = () => {
         <div className="grid-lines" />
         <div className="left-content">
           <div className="logo-row" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-            <div className="logo-box">
-              <LogoIcon />
+            <div className="logo-box" style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg, #A88BFA, #7C3AED)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>
+              <LogoIcon size={18} color="#ffffff" />
             </div>
             <span className="logo-name">Neura Voice</span>
           </div>
@@ -312,8 +305,8 @@ const Auth = () => {
 
       {/* RIGHT PANEL */}
       <div className="right">
-        <button className="mode-toggle" onClick={toggleTheme}>
-          {dark ? "☀️ Light mode" : "🌙 Dark mode"}
+        <button className="mode-toggle" onClick={toggleTheme} style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+          {dark ? <><Sun size={14} /> Light mode</> : <><Moon size={14} /> Dark mode</>}
         </button>
 
         {state !== "success" && (
@@ -369,7 +362,7 @@ const Auth = () => {
                 <input
                   id={isReg ? "pw-reg" : "pw-login"}
                   className="f-input"
-                  type="password"
+                  type={showPw ? "text" : "password"}
                   placeholder="••••••••"
                   value={form.password}
                   onChange={(e) => {
@@ -378,10 +371,14 @@ const Auth = () => {
                   }}
                   autoComplete={isReg ? "new-password" : "current-password"}
                 />
-                <div className="input-icon" onClick={() => {
-                  const input = document.getElementById(isReg ? "pw-reg" : "pw-login");
-                  if (input) input.type = input.type === "password" ? "text" : "password";
-                }}>👁</div>
+                <div
+                  className="input-icon"
+                  onClick={() => setShowPw(!showPw)}
+                  style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  title={showPw ? "Hide password" : "Show password"}
+                >
+                  {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                </div>
               </div>
               {isReg && form.password && <StrengthBar password={form.password} />}
               {errors.password && <span className="f-error">{errors.password}</span>}
@@ -464,7 +461,9 @@ const Auth = () => {
 
         {state === "success" && (
           <div className="success-card" style={{ display: "flex" }}>
-            <div className="success-orb">✓</div>
+            <div className="success-orb" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Check size={26} color="#ffffff" strokeWidth={3} />
+            </div>
             <div className="form-title">Welcome to Neura Voice!</div>
             <div className="form-sub" style={{ textAlign: "center", lineHeight: 1.65 }}>
               Your account is ready. Taking you to
@@ -500,8 +499,8 @@ const Auth = () => {
       </div>
 
       {toast && (
-        <div className="toast">
-          <span>💬</span> {toast}
+        <div className="toast" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+          <Info size={15} /> {toast}
         </div>
       )}
     </div>

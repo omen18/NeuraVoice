@@ -2,6 +2,19 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getLatestSession, getTrajectory } from "../services/dashboardService";
+import { LogoIcon } from "../components/common/Logo";
+import {
+  Brain as BrainIcon,
+  MessageSquare,
+  Timer,
+  Waves,
+  FileText,
+  Zap,
+  Sun,
+  Moon,
+  AlertTriangle,
+  Sparkles,
+} from "lucide-react";
 import "../styles/brain.css";
 
 // ── STATIC DATA (used as fallback if API unavailable) ──
@@ -44,25 +57,13 @@ const BIOMARKER_TO_REGION = {
 };
 
 const ANOMALIES_STATIC = [
-  { icon: "🧠", name: "Semantic coherence", val: "0.81", status: "ok",   label: "Normal"   },
-  { icon: "🗣️", name: "Speech rate",        val: "118",  status: "ok",   label: "Normal"   },
-  { icon: "⏸️", name: "Pause frequency",    val: "3.2",  status: "warn", label: "Elevated" },
-  { icon: "🎵", name: "Pitch mean F0",       val: "182",  status: "ok",   label: "Normal"   },
-  { icon: "📊", name: "Lexical diversity",   val: "0.74", status: "warn", label: "Watch"    },
-  { icon: "⚡", name: "HNR ratio",           val: "18.4", status: "ok",   label: "Normal"   },
+  { icon: <BrainIcon size={16} />, name: "Semantic coherence", val: "0.81", status: "ok",   label: "Normal"   },
+  { icon: <MessageSquare size={16} />, name: "Speech rate",        val: "118",  status: "ok",   label: "Normal"   },
+  { icon: <Timer size={16} />, name: "Pause frequency",    val: "3.2",  status: "warn", label: "Elevated" },
+  { icon: <Waves size={16} />, name: "Pitch mean F0",       val: "182",  status: "ok",   label: "Normal"   },
+  { icon: <FileText size={16} />, name: "Lexical diversity",   val: "0.74", status: "warn", label: "Watch"    },
+  { icon: <Zap size={16} />, name: "HNR ratio",           val: "18.4", status: "ok",   label: "Normal"   },
 ];
-
-// ── LOGO ──
-const LogoIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
-    <circle cx="9" cy="9" r="5" stroke="#fff" strokeWidth="1.6"/>
-    <circle cx="9" cy="9" r="1.8" fill="#fff"/>
-    <line x1="9" y1="2"  x2="9"  y2="4"  stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/>
-    <line x1="9" y1="14" x2="9"  y2="16" stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/>
-    <line x1="2" y1="9"  x2="4"  y2="9"  stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/>
-    <line x1="14" y1="9" x2="16" y2="9"  stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/>
-  </svg>
-);
 
 // ── BRAIN CANVAS ──
 const BrainCanvas = ({ dark, selected, onSelect, onHover }) => {
@@ -363,12 +364,12 @@ const Brain = () => {
           })();
 
           const anomalyData = [
-            { icon: "🧠", name: "Semantic coherence", key: "semantic_coherence", unit: "",  normal: [0.7, 1.0] },
-            { icon: "🗣️", name: "Speech rate",        key: "speech_rate",        unit: "",  normal: [90, 150]  },
-            { icon: "⏸️", name: "Pause frequency",    key: "pause_frequency",    unit: "",  normal: [0, 4.0]   },
-            { icon: "🎵", name: "Pitch mean F0",       key: "pitch_mean",         unit: "Hz",normal: [120, 220] },
-            { icon: "📊", name: "Lexical diversity",   key: "lexical_diversity",  unit: "",  normal: [0.65, 1.0]},
-            { icon: "⚡", name: "HNR ratio",           key: "hnr",                unit: "dB",normal: [15, 25]   },
+            { icon: <BrainIcon size={16} />, name: "Semantic coherence", key: "semantic_coherence", unit: "",  normal: [0.7, 1.0] },
+            { icon: <MessageSquare size={16} />, name: "Speech rate",        key: "speech_rate",        unit: "",  normal: [90, 150]  },
+            { icon: <Timer size={16} />, name: "Pause frequency",    key: "pause_frequency",    unit: "",  normal: [0, 4.0]   },
+            { icon: <Waves size={16} />, name: "Pitch mean F0",       key: "pitch_mean",         unit: "Hz",normal: [120, 220] },
+            { icon: <FileText size={16} />, name: "Lexical diversity",   key: "lexical_diversity",  unit: "",  normal: [0.65, 1.0]},
+            { icon: <Zap size={16} />, name: "HNR ratio",           key: "hnr",                unit: "dB",normal: [15, 25]   },
           ];
 
           const realAnomalies = anomalyData.map(a => {
@@ -490,7 +491,7 @@ const Brain = () => {
       {/* ── NAV ── */}
       <nav className="dash-nav">
         <a href="/dashboard" className="nav-logo">
-          <div className="nav-logo-box"><LogoIcon /></div>
+          <div className="nav-logo-box"><LogoIcon size={18} color="#ffffff" /></div>
           <span className="nav-logo-name">Neura Voice</span>
         </a>
         <div className="nav-links">
@@ -504,7 +505,7 @@ const Brain = () => {
         </div>
         <div className="nav-right">
           <button className="nav-mode-btn" onClick={toggleDark}>
-            {dark ? "☀️ Light" : "🌙 Dark"}
+            {dark ? <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}><Sun size={13} /> Light</span> : <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}><Moon size={13} /> Dark</span>}
           </button>
           <button className="nav-session-btn" onClick={() => navigate("/session")}>
             + Start session
@@ -540,13 +541,13 @@ const Brain = () => {
             <div className="bs-label">Weakest region</div>
             <div className="bs-value" style={{ fontSize: 22, marginTop: 6 }}>{weakestRegion.name}</div>
             <div className="bs-sub">Score {weakestRegion.score} · needs monitoring</div>
-            <div className="bs-badge">⚠ Watch closely</div>
+            <div className="bs-badge" style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}><AlertTriangle size={12} /> Watch closely</div>
           </div>
           <div className="brain-stat bs-strong">
             <div className="bs-label">Strongest region</div>
             <div className="bs-value" style={{ fontSize: 22, marginTop: 6 }}>{strongestRegion.name}</div>
             <div className="bs-sub">Score {strongestRegion.score} · excellent</div>
-            <div className="bs-badge">✦ Excellent</div>
+            <div className="bs-badge" style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}><Sparkles size={12} /> Excellent</div>
           </div>
         </div>
 
@@ -609,8 +610,8 @@ const Brain = () => {
 
               {selRegion ? (() => {
                 const [bg, bc, tc] = statusBg(selRegion.status);
-                const label = selRegion.status === "ok" ? "✦ Healthy"
-                  : selRegion.status === "warn" ? "⚠ Watch" : "⚠ Alert";
+                const isOk = selRegion.status === "ok";
+                const isWarn = selRegion.status === "warn";
                 return (
                   <div className="insight-inner">
                     <div className="insight-region">{selRegion.name} lobe</div>
@@ -618,8 +619,12 @@ const Brain = () => {
                       background: bg,
                       border: `1px solid ${bc}`,
                       color: tc,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px"
                     }}>
-                      {label}
+                      {isOk ? <Sparkles size={12} /> : <AlertTriangle size={12} />}
+                      {isOk ? "Healthy" : isWarn ? "Watch" : "Alert"}
                     </div>
                     <div className="insight-score-row">
                       <div className="insight-score" style={{ color: selRegion.color }}>
@@ -708,8 +713,9 @@ const Brain = () => {
                 <div className="anomaly-icon">{a.icon}</div>
                 <div className="anomaly-name">{a.name}</div>
                 <div className="anomaly-value">{a.val}</div>
-                <div className="anomaly-status">
-                  {a.status === "ok" ? "▲" : "⚠"} {a.label}
+                <div className="anomaly-status" style={{ display: "inline-flex", alignItems: "center", gap: "3px" }}>
+                  {a.status === "ok" ? "▲ " : <AlertTriangle size={11} style={{ display: "inline" }} />}
+                  {a.label}
                 </div>
               </div>
             ))}

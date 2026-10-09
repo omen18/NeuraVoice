@@ -3,19 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { getProfile, getSessionHistory, getLatestSession, getWeeklyReport, getTrajectory } from "../services/dashboardService";
+import { LogoIcon } from "../components/common/Logo";
+import {
+  Sun,
+  Moon,
+  Brain,
+  TrendingUp,
+  Flame,
+  Calendar,
+  Award,
+  Sparkles,
+  Mic,
+  FileDown,
+} from "lucide-react";
 import "../styles/dashboard.css";
-
-// ── ANIMATED SVG COMPONENTS ──
-const LogoIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
-    <circle cx="9" cy="9" r="5" stroke="#fff" strokeWidth="1.6" />
-    <circle cx="9" cy="9" r="1.8" fill="#fff" />
-    <line x1="9" y1="2" x2="9" y2="4" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="9" y1="14" x2="9" y2="16" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="2" y1="9" x2="4" y2="9" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="14" y1="9" x2="16" y2="9" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-  </svg>
-);
 
 // ── WAVEFORM ANIMATION ──
 const Waveform = ({ active = true }) => (
@@ -363,9 +364,9 @@ const Dashboard = () => {
     <div className={`dashboard ${dark ? "dark" : "light"}`}>
       {/* Navigation Bar */}
       <nav className="dashboard-nav">
-        <div className="nav-brand" onClick={() => navigate("/")}>
-          <div className="brand-ring">
-            <LogoIcon />
+        <div className="nav-brand" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+          <div className="brand-ring" style={{ width: "32px", height: "32px", borderRadius: "9px", background: "linear-gradient(135deg, #A88BFA, #7C3AED)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(124, 58, 237, 0.25)" }}>
+            <LogoIcon size={18} color="#ffffff" />
           </div>
           <span className="brand-name">Neura Voice</span>
         </div>
@@ -377,8 +378,8 @@ const Dashboard = () => {
         </div>
 
         <div className="nav-actions">
-          <button className="theme-toggle" onClick={toggleDark}>
-            {dark ? "☀️" : "🌙"}
+          <button className="theme-toggle" onClick={toggleDark} title="Toggle theme">
+            {dark ? <Sun size={16} /> : <Moon size={16} />}
           </button>
           <button className="new-session" onClick={() => navigate("/session")}>
             <span>+</span> New Session
@@ -404,7 +405,7 @@ const Dashboard = () => {
             <div className="welcome-header">
               <div className="welcome-text">
                 <div className="greeting">
-                  <span className="greeting-wave">👋</span>
+                  <span className="greeting-dot" style={{ display: "inline-block", width: "8px", height: "8px", borderRadius: "50%", background: "#10B981", marginRight: "6px" }}></span>
                   {getGreeting()}, {firstName}
                   {isDemo && <span className="demo-badge">Demo Mode</span>}
                 </div>
@@ -424,7 +425,7 @@ const Dashboard = () => {
             {/* Stats Grid */}
             <div className="stats-grid">
               <div className="stat-card">
-                <div className="stat-icon">🧠</div>
+                <div className="stat-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><Brain size={22} color="#7C3AED" /></div>
                 <div className="stat-info">
                   <div className="stat-label">Cognitive Age</div>
                   <div className="stat-value">{cognitiveAge !== '—' ? cognitiveAge : '—'}</div>
@@ -437,7 +438,7 @@ const Dashboard = () => {
               </div>
 
               <div className="stat-card">
-                <div className="stat-icon">📊</div>
+                <div className="stat-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><TrendingUp size={22} color="#10B981" /></div>
                 <div className="stat-info">
                   <div className="stat-label">Latest Risk Score</div>
                   <div className="stat-value">{latestRiskScore !== '—' ? latestRiskScore.toFixed(2) : '—'}</div>
@@ -447,7 +448,7 @@ const Dashboard = () => {
               </div>
 
               <div className="stat-card">
-                <div className="stat-icon">🔥</div>
+                <div className="stat-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><Flame size={22} color="#F59E0B" /></div>
                 <div className="stat-info">
                   <div className="stat-label">Current Streak</div>
                   <div className="stat-value">{streak}</div>
@@ -457,14 +458,14 @@ const Dashboard = () => {
               </div>
 
               <div className="stat-card">
-                <div className="stat-icon">📅</div>
+                <div className="stat-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><Calendar size={22} color="#6366F1" /></div>
                 <div className="stat-info">
                   <div className="stat-label">Total Sessions</div>
                   <div className="stat-value">{totalSessions}</div>
                   <div className="stat-compare">since joining</div>
                   <div className="stat-trend positive">▲ {sessionsThisWeek} this week</div>
                 </div>
-                <div className="session-badge">🏆</div>
+                <div className="session-badge" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><Award size={16} color="#F59E0B" /></div>
               </div>
             </div>
 
@@ -604,7 +605,7 @@ const Dashboard = () => {
             {displayNarrative && (
               <div className="latest-insight">
                 <div className="insight-header">
-                  <span className="insight-icon">✨</span>
+                  <span className="insight-icon" style={{ display: "inline-flex", alignItems: "center" }}><Sparkles size={16} color="#7C3AED" /></span>
                   <h3>{isDemo ? "Demo Insight" : "Weekly Insight"}</h3>
                 </div>
                 <div className="insight-content">
@@ -633,11 +634,11 @@ const Dashboard = () => {
 
             {/* Quick Actions */}
             <div className="quick-actions">
-              <button className="action-btn primary" onClick={() => navigate("/session")}>
-                <span>🎙️</span> Start New Session
+              <button className="action-btn primary" onClick={() => navigate("/session")} style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                <Mic size={16} /> Start New Session
               </button>
-              <button className="action-btn" onClick={() => navigate("/ar-report")}>
-                <span>📄</span> Download Full Report
+              <button className="action-btn" onClick={() => navigate("/ar-report")} style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                <FileDown size={16} /> Download Full Report
               </button>
             </div>
           </>

@@ -1,6 +1,21 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { LogoIcon } from "../components/common/Logo";
+import {
+  Mic,
+  FileText,
+  Activity,
+  Zap,
+  Code2,
+  Database,
+  AudioWaveform,
+  BarChart3,
+  Cpu,
+  GitFork,
+  ShieldCheck,
+  Layers,
+} from "lucide-react";
 import "../styles/home.css";
 
 const Home = () => {
@@ -72,9 +87,11 @@ const Home = () => {
 
       {/* Navigation */}
       <nav className="home-nav" id="home-nav">
-        <div className="nav-logo" onClick={() => goToPage("home")}>
-          <div className="logo-ring"></div>
-          Neura Voice
+        <div className="nav-logo" onClick={() => goToPage("home")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ width: "32px", height: "32px", borderRadius: "9px", background: "linear-gradient(135deg, #A88BFA, #7C3AED)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", boxShadow: "0 2px 8px rgba(124, 58, 237, 0.25)" }}>
+            <LogoIcon size={18} color="#ffffff" />
+          </div>
+          <span style={{ fontWeight: 600, letterSpacing: "-0.01em" }}>Neura Voice</span>
         </div>
         <div className="nav-right">
           <div className="nav-cta" onClick={() => goToPage("auth")}>
@@ -217,7 +234,7 @@ const Home = () => {
           <div className="steps-grid">
             <div className="step-card">
               <div className="step-n">01</div>
-              <div className="step-ico">🎙️</div>
+              <div className="step-ico"><Mic size={20} color="#9B4F7A" /></div>
               <div className="step-t">Record</div>
               <div className="step-d">
                 3-min browser session. MediaRecorder API captures audio — .webm auto-converted to .wav.
@@ -226,7 +243,7 @@ const Home = () => {
             </div>
             <div className="step-card">
               <div className="step-n">02</div>
-              <div className="step-ico">📝</div>
+              <div className="step-ico"><FileText size={20} color="#9B4F7A" /></div>
               <div className="step-t">Transcribe</div>
               <div className="step-d">
                 Whisper ASR converts speech to full text transcript with high accuracy across accents.
@@ -235,7 +252,7 @@ const Home = () => {
             </div>
             <div className="step-card">
               <div className="step-n">03</div>
-              <div className="step-ico">🔬</div>
+              <div className="step-ico"><Activity size={20} color="#9B4F7A" /></div>
               <div className="step-t">Extract</div>
               <div className="step-d">
                 openSMILE → 9 acoustic features. spaCy + SBERT → 4 NLP features. 14 biomarkers total.
@@ -244,7 +261,7 @@ const Home = () => {
             </div>
             <div className="step-card">
               <div className="step-n">04</div>
-              <div className="step-ico">⚡</div>
+              <div className="step-ico"><Zap size={20} color="#9B4F7A" /></div>
               <div className="step-t">Detect & Track</div>
               <div className="step-d">
                 XGBoost flags anomalies. FastAPI stores results. Dashboard renders risk trend over months.
@@ -410,63 +427,63 @@ const Home = () => {
         <h2 className="s-title">The Stack</h2>
         <div className="stack-grid">
           <div className="stack-item">
-            <span className="s-ico">⚛️</span>
+            <span className="s-ico"><Code2 size={18} color="#9B4F7A" /></span>
             <div>
               <div className="s-name">React 18 + Vite</div>
               <div className="s-layer">Frontend</div>
             </div>
           </div>
           <div className="stack-item">
-            <span className="s-ico">⚡</span>
+            <span className="s-ico"><Zap size={18} color="#9B4F7A" /></span>
             <div>
               <div className="s-name">FastAPI</div>
               <div className="s-layer">Backend API</div>
             </div>
           </div>
           <div className="stack-item">
-            <span className="s-ico">🐘</span>
+            <span className="s-ico"><Database size={18} color="#9B4F7A" /></span>
             <div>
               <div className="s-name">PostgreSQL</div>
               <div className="s-layer">Database</div>
             </div>
           </div>
           <div className="stack-item">
-            <span className="s-ico">🔊</span>
+            <span className="s-ico"><AudioWaveform size={18} color="#9B4F7A" /></span>
             <div>
               <div className="s-name">OpenAI Whisper</div>
               <div className="s-layer">Transcription</div>
             </div>
           </div>
           <div className="stack-item">
-            <span className="s-ico">📊</span>
+            <span className="s-ico"><BarChart3 size={18} color="#9B4F7A" /></span>
             <div>
               <div className="s-name">openSMILE</div>
               <div className="s-layer">Acoustic Features</div>
             </div>
           </div>
           <div className="stack-item">
-            <span className="s-ico">🧩</span>
+            <span className="s-ico"><Cpu size={18} color="#9B4F7A" /></span>
             <div>
               <div className="s-name">spaCy + SBERT</div>
               <div className="s-layer">NLP Analysis</div>
             </div>
           </div>
           <div className="stack-item">
-            <span className="s-ico">🌲</span>
+            <span className="s-ico"><GitFork size={18} color="#9B4F7A" /></span>
             <div>
               <div className="s-name">XGBoost</div>
               <div className="s-layer">Anomaly Detection</div>
             </div>
           </div>
           <div className="stack-item">
-            <span className="s-ico">🔐</span>
+            <span className="s-ico"><ShieldCheck size={18} color="#9B4F7A" /></span>
             <div>
               <div className="s-name">JWT + bcrypt</div>
               <div className="s-layer">Auth</div>
             </div>
           </div>
           <div className="stack-item">
-            <span className="s-ico">▲</span>
+            <span className="s-ico"><Layers size={18} color="#9B4F7A" /></span>
             <div>
               <div className="s-name">Vercel + Render</div>
               <div className="s-layer">Deployment</div>

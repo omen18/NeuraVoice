@@ -99,8 +99,8 @@ const ChatBot = () => {
     if (open && messages.length === 0) {
       const name = user?.name?.split(" ")[0] || "there";
       const greeting = sessionData
-        ? `Hi ${name}! 👋 I'm your Neura Voice health assistant. I can see your latest session results — ask me anything about your biomarkers, risk tier, or general brain health!`
-        : `Hi ${name}! 👋 I'm your Neura Voice health assistant. Ask me anything about how Neura Voice works, what the biomarkers mean, or general cognitive health questions!`;
+        ? `Hi ${name}! I'm your Neura Voice health assistant. I can see your latest session results — ask me anything about your biomarkers, risk tier, or general brain health.`
+        : `Hi ${name}! I'm your Neura Voice health assistant. Ask me anything about how Neura Voice works, what the biomarkers mean, or general cognitive health questions.`;
       setMessages([{ role: "assistant", content: greeting }]);
     }
     if (open) setTimeout(() => inputRef.current?.focus(), 100);

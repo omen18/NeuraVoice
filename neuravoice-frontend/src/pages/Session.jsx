@@ -11,6 +11,24 @@ import {
   STAGE_ORDER,
   TEXT_STAGE_ORDER,
 } from "../services/sessionService";
+import { LogoIcon } from "../components/common/Logo";
+import {
+  Sun,
+  Moon,
+  Mic,
+  FileEdit,
+  CheckCircle2,
+  AlertTriangle,
+  Check,
+  Lightbulb,
+  Brain,
+  Globe2,
+  Smile,
+  AlertCircle,
+  Frown,
+  Activity,
+  Sparkles,
+} from "lucide-react";
 import "../styles/session.css";
 
 // ── PROMPTS ──
@@ -70,25 +88,16 @@ const TOTAL = 180;
 const CIRC  = 395;
 const MIN_WORDS = 50; // minimum words for a valid text session
 
-// ── LOGO ICON ──
-const LogoIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
-    <circle cx="9" cy="9" r="5" stroke="#fff" strokeWidth="1.6" />
-    <circle cx="9" cy="9" r="1.8" fill="#fff" />
-    <line x1="9" y1="2" x2="9" y2="4" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="9" y1="14" x2="9" y2="16" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="2" y1="9" x2="4" y2="9" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-    <line x1="14" y1="9" x2="16" y2="9" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-  </svg>
-);
-
-// ── RESULT MESSAGES ── (fallbacks used only when API interpretation is missing)
-const GOOD_MSG  = (name) => `Your <b>semantic coherence</b> is above your personal baseline — clear, connected thinking today. <b>Excellent session, ${name}!</b> Let's meet again tomorrow.`;
-const WARN_MSG  = ()     => `Some language patterns were slightly varied today — possibly fatigue or stress. <b>Semantic coherence is holding steady</b>. Rest well and try again tomorrow.`;
-const BAD_MSG   = (name) => `We noticed some changes in your language patterns today, <b>${name}</b>. This can happen with fatigue or illness. You can <b>try again</b> to see if it improves, or rest and try tomorrow.`;
-
 // ── MOOD DISPLAY HELPERS ──
-const MOOD_EMOJI = { calm: "😌", stressed: "😰", sad: "😔", fatigued: "😴" };
+const getMoodIcon = (label) => {
+  switch (label) {
+    case "calm": return <Smile size={24} color="#4caf87" />;
+    case "stressed": return <AlertCircle size={24} color="#e5836a" />;
+    case "sad": return <Frown size={24} color="#7a8fc4" />;
+    case "fatigued": return <Moon size={24} color="#b07cc6" />;
+    default: return <Brain size={24} color="#9B87F5" />;
+  }
+};
 const MOOD_COLOR = { calm: "#4caf87", stressed: "#e5836a", sad: "#7a8fc4", fatigued: "#b07cc6" };
 
 // ── HELPERS ──
@@ -742,8 +751,10 @@ const Session = () => {
 
       {/* ── Navigation ── */}
       <nav className="session-nav">
-        <div className="nav-brand" onClick={() => navigate("/")}>
-          <div className="brand-ring"><LogoIcon /></div>
+        <div className="nav-brand" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+          <div className="brand-ring" style={{ width: "32px", height: "32px", borderRadius: "9px", background: "linear-gradient(135deg, #A88BFA, #7C3AED)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(124, 58, 237, 0.25)" }}>
+            <LogoIcon size={18} color="#ffffff" />
+          </div>
           <span className="brand-name">Neura Voice</span>
         </div>
         <div className="nav-links">
@@ -752,7 +763,9 @@ const Session = () => {
           <button className="nav-link" onClick={() => navigate("/ar-report")}>Report</button>
         </div>
         <div className="nav-actions">
-          <button className="theme-toggle" onClick={toggleTheme}>{dark ? "☀️" : "🌙"}</button>
+          <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
+            {dark ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
           <button className="dashboard-link" onClick={() => navigate("/dashboard")}>Dashboard</button>
           <div className="user-menu" onClick={logout}>
             <div className="user-avatar">{user?.name?.charAt(0)?.toUpperCase() || "U"}</div>
@@ -785,14 +798,18 @@ const Session = () => {
               onClick={() => switchMode("voice")}
               disabled={state === "recording" || state === "analysing"}
             >
-              🎙️ Voice Mode
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <Mic size={15} /> Voice Mode
+              </span>
             </button>
             <button
               className={`mode-btn ${mode === "text" ? "active" : ""}`}
               onClick={() => switchMode("text")}
               disabled={state === "recording" || state === "analysing"}
             >
-              ✍️ Text Mode
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <FileEdit size={15} /> Text Mode
+              </span>
               <span className="mode-tag">Accessibility</span>
             </button>
           </div>
@@ -801,7 +818,7 @@ const Session = () => {
         {/* ── Done Today ── */}
         {state === "donegood" && (
           <div className="done-card">
-            <div className="done-icon">🌿</div>
+            <div className="done-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><CheckCircle2 size={44} color="#10B981" /></div>
             <h2>You've completed today's session!</h2>
             <p>Your cognitive health is looking great today. Your data has been recorded and analysed.</p>
             <div className="done-badge">Cognitive health: Good</div>
@@ -816,7 +833,7 @@ const Session = () => {
         {/* ── Error ── */}
         {state === "error" && (
           <div className="error-card">
-            <div className="error-icon">⚠️</div>
+            <div className="error-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><AlertTriangle size={44} color="#EF4444" /></div>
             <h2>Something went wrong</h2>
             <p>{errorMsg || "An unexpected error occurred. Please try again."}</p>
             <div className="error-actions">
@@ -855,7 +872,7 @@ const Session = () => {
             )}
             {skipped && (
               <div className="free-mode-card">
-                <div className="free-mode-icon">🎙️</div>
+                <div className="free-mode-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><Mic size={28} color="#7C3AED" /></div>
                 <h3>Free-speak Mode</h3>
                 <p>Speak about anything for 3 minutes. Your voice patterns will be analysed accurately.</p>
               </div>
@@ -902,7 +919,7 @@ const Session = () => {
                   {state === "idle"      && "Ready to record"}
                   {state === "recording" && `Recording... ${formatTime(timeLeft)}`}
                   {state === "analysing" && (STAGE_LABELS[analysisStage] || "Analysing your voice...")}
-                  {state === "done"      && "Analysis complete ✓"}
+                  {state === "done"      && "Analysis complete"}
                 </span>
               </div>
 
@@ -981,8 +998,8 @@ const Session = () => {
               <div className="text-session-card">
                 <div className="text-session-header">
                   <span className="text-session-title">Your Response</span>
-                  <span className={`word-counter ${textReady ? "ready" : ""}`}>
-                    {wordCount} / {MIN_WORDS} words {textReady ? "✓" : ""}
+                  <span className={`word-counter ${textReady ? "ready" : ""}`} style={{ display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                    {wordCount} / {MIN_WORDS} words {textReady && <Check size={14} color="#10B981" />}
                   </span>
                 </div>
                 <textarea
@@ -997,11 +1014,12 @@ const Session = () => {
                     style={{ width: `${Math.min(100, (wordCount / MIN_WORDS) * 100)}%` }} />
                 </div>
                 <div className="text-hint">
-                  <span>💡</span>
+                  <span style={{ display: "inline-flex", alignItems: "center" }}><Lightbulb size={16} color="#F59E0B" /></span>
                   <span>Write naturally and in detail — your vocabulary, sentence structure, and idea flow are what matter, not spelling or grammar.</span>
                 </div>
-                <button className="text-submit-btn" onClick={submitText} disabled={!textReady}>
-                  {textReady ? "✓ Analyse My Writing" : `Write ${MIN_WORDS - wordCount} more words to continue`}
+                <button className="text-submit-btn" onClick={submitText} disabled={!textReady} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+                  {textReady && <Sparkles size={16} />}
+                  {textReady ? "Analyse My Writing" : `Write ${MIN_WORDS - wordCount} more words to continue`}
                 </button>
               </div>
             )}
@@ -1009,7 +1027,7 @@ const Session = () => {
             {/* Text Analysing State */}
             {state === "analysing" && (
               <div className="text-analysing-card">
-                <div className="text-analysing-icon">🧠</div>
+                <div className="text-analysing-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><Brain size={36} color="#7C3AED" /></div>
                 <div className="text-analysing-title">Analysing your writing...</div>
                 <div className="text-analysing-sub">
                   Running cognitive language analysis on your text
@@ -1027,7 +1045,8 @@ const Session = () => {
                     return (
                       <div key={key} className={`text-stage-item ${isActive ? "active" : isDone ? "done" : ""}`}>
                         <div className="text-stage-dot" />
-                        {isDone ? "✓ " : ""}{label}
+                        {isDone && <Check size={12} style={{ display: "inline", marginRight: "4px" }} />}
+                        {label}
                       </div>
                     );
                   })}
@@ -1054,12 +1073,16 @@ const Session = () => {
 
             {/* Text mode label */}
             {result.mode === "text" && (
-              <div className="text-mode-badge">✍️ Text Mode — NLP biomarkers only</div>
+              <div className="text-mode-badge" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <FileEdit size={14} /> Text Mode — NLP biomarkers only
+              </div>
             )}
 
             {/* Hindi language badge */}
             {result.biomarkers?.language_detected === "hi" && (
-              <div className="text-mode-badge">🇮🇳 Hindi session detected and analysed</div>
+              <div className="text-mode-badge" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <Globe2 size={14} /> Hindi session detected and analysed
+              </div>
             )}
 
             <div className="results-metrics">
@@ -1124,8 +1147,8 @@ const Session = () => {
                 alignItems: "flex-start",
                 gap: "14px",
               }}>
-                <span style={{ fontSize: "28px", lineHeight: 1 }}>
-                  {MOOD_EMOJI[result.mood.label] || "🧠"}
+                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "36px", height: "36px", borderRadius: "10px", background: `${MOOD_COLOR[result.mood.label] || "#888"}15` }}>
+                  {getMoodIcon(result.mood.label)}
                 </span>
                 <div style={{ flex: 1 }}>
                   <div style={{
@@ -1170,9 +1193,10 @@ const Session = () => {
                 <span style={{
                   fontSize: "11px", padding: "3px 10px", borderRadius: "20px",
                   background: "var(--bg-secondary)", color: "var(--text-secondary)",
-                  fontWeight: 500, letterSpacing: "0.03em"
+                  fontWeight: 500, letterSpacing: "0.03em", display: "inline-flex", alignItems: "center", gap: "4px"
                 }}>
-                  🔬 {result.method === "xgboost_only"
+                  <Activity size={12} />
+                  {result.method === "xgboost_only"
                     ? "XGBoost only (early sessions)"
                     : result.method === "hybrid_70_30"
                     ? "Hybrid — 70% XGBoost / 30% personal baseline"

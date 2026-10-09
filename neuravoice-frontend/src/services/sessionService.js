@@ -27,14 +27,14 @@ export const STAGE_LABELS = {
   acoustic:     "Extracting acoustic features...",
   nlp:          "Analysing language patterns...",
   risk:         "Computing risk tier...",
-  done:         "Analysis complete ✓",
+  done:         "Analysis complete",
 };
 
 // Text mode stage labels
 export const TEXT_STAGE_LABELS = {
   nlp:  "Analysing language patterns...",
   risk: "Computing risk tier...",
-  done: "Analysis complete ✓",
+  done: "Analysis complete",
 };
 
 export const STAGE_ORDER      = ["uploading", "transcribing", "acoustic", "nlp", "risk", "done"];
